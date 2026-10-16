@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')
-        IMAGE_NAME = "webabhinav30/devops-mini-app"
+        IMAGE_NAME = "abhinavxd123/devops-mini-app"
     }
     stages {
         stage('Checkout') { steps { checkout scm } }

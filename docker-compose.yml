@@ -1,6 +1,6 @@
 services:
   app:
-    image: webabhinav30/devops-mini-app:latest
+    image: abhinavxd123/devops-mini-app:latest
     ports:
       - "5000:5000"
     restart: unless-stopped
