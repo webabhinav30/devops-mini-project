@@ -1,0 +1,54 @@
+---
+- name: Deploy app and monitoring stack
+  hosts: web
+  become: yes
+  tasks:
+    - name: Add Docker repo
+      get_url:
+        url: https://download.docker.com/linux/rhel/docker-ce.repo
+        dest: /etc/yum.repos.d/docker-ce.repo
+
+    - name: Install Docker and Compose plugin
+      dnf:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-compose-plugin
+        state: present
+
+    - name: Start Docker
+      systemd:
+        name: docker
+        state: started
+        enabled: yes
+
+    - name: Create project directory
+      file:
+        path: /home/ec2-user/app
+        state: directory
+        owner: ec2-user
+
+    - name: Copy docker-compose.yml
+      copy:
+        src: ../docker-compose.yml
+        dest: /home/ec2-user/app/docker-compose.yml
+        owner: ec2-user
+
+    - name: Copy prometheus.yml
+      copy:
+        src: ../prometheus.yml
+        dest: /home/ec2-user/app/prometheus.yml
+        owner: ec2-user
+
+    - name: Pull latest images
+      command: docker compose pull
+      args:
+        chdir: /home/ec2-user/app
+      changed_when: false
+
+    - name: Start or update the stack
+      command: docker compose up -d
+      args:
+        chdir: /home/ec2-user/app
+      changed_when: false
